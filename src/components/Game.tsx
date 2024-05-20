@@ -3,16 +3,22 @@ import { useNavigate } from 'react-router-dom';
 import { pokemonData, Pokemon } from '../data/pokemon';
 import Hint from './Hint';
 
+interface GuessLog {
+  guess: string;
+  hints: string[];
+}
+
 const Game: React.FC = () => {
   const navigate = useNavigate();
   const [selectedPokemon] = useState<Pokemon>(pokemonData[Math.floor(Math.random() * pokemonData.length)]);
   const [guess, setGuess] = useState<string>('');
   const [hints, setHints] = useState<string[]>([]);
-  const [guesses, setGuesses] = useState<string[]>([]);
+  const [guessLog, setGuessLog] = useState<GuessLog[]>([]);
 
   const handleGuess = () => {
-    setGuesses([...guesses, guess]);
-    generateHint(guess);
+    const newHints = generateHint(guess);
+    setGuessLog([...guessLog, { guess, hints: newHints }]);
+    setHints(newHints);
     setGuess('');
   };
 
@@ -25,7 +31,7 @@ const Game: React.FC = () => {
     return 'Wrong Type';
   };
 
-  const generateHint = (guess: string) => {
+  const generateHint = (guess: string): string[] => {
     const guessedPokemon = pokemonData.find(p => p.name.toLowerCase() === guess.toLowerCase());
     if (guessedPokemon) {
       const typeHint = compareTypes(guessedPokemon.type, selectedPokemon.type);
@@ -46,9 +52,9 @@ const Game: React.FC = () => {
         : 'Wrong Height';
       const legendaryHint = guessedPokemon.isLegendary === selectedPokemon.isLegendary ? 'Correct Legendary Status' : 'Wrong Legendary Status';
 
-      setHints([typeHint, generationHint, weightHint, heightHint, legendaryHint]);
+      return [typeHint, generationHint, weightHint, heightHint, legendaryHint];
     } else {
-      setHints(['Invalid Pokémon Name']);
+      return ['Invalid Pokémon Name'];
     }
   };
 
@@ -72,6 +78,18 @@ const Game: React.FC = () => {
         {hints.map((hint, index) => <Hint key={index} hint={hint} />)}
       </div>
       <button className="btn btn-danger" onClick={finishGame}>Finish Game</button>
+
+      <div className="guess-log">
+        <h3>Guess Log</h3>
+        {guessLog.map((log, index) => (
+          <div key={index} className="log-entry">
+            <p><strong>Guess:</strong> {log.guess}</p>
+            <div className="hints">
+              {log.hints.map((hint, hintIndex) => <Hint key={hintIndex} hint={hint} />)}
+            </div>
+          </div>
+        ))}
+      </div>
     </div>
   );
 };

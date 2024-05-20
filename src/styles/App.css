@@ -13,7 +13,8 @@ body {
   text-align: center;
 }
 
-h2 {
+h2,
+h3 {
   margin-bottom: 1.5rem;
 }
 
@@ -72,4 +73,22 @@ h2 {
 .btn-danger:hover {
   background-color: #c82333;
   border-color: #bd2130;
+}
+
+.guess-log {
+  margin-top: 2rem;
+  text-align: left;
+}
+
+.log-entry {
+  margin-bottom: 1rem;
+}
+
+.log-entry p {
+  margin: 0;
+  font-weight: bold;
+}
+
+.log-entry .hints {
+  margin-top: 0.5rem;
 }

@@ -23,7 +23,6 @@ const Result: React.FC = () => {
       {selectedPokemon && (
         <>
           <p>The correct Pokémon was {selectedPokemon.name}.</p>
-          <img src={require(`../sprites/${selectedPokemon.name.toLowerCase()}.png`).default} alt={selectedPokemon.name} className="img-fluid" />
         </>
       )}
       <button className="btn btn-primary btn-lg" onClick={restartGame}>Play Again</button>
