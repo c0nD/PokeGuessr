@@ -15,11 +15,20 @@ const Game: React.FC = () => {
   const [hints, setHints] = useState<string[]>([]);
   const [guessLog, setGuessLog] = useState<GuessLog[]>([]);
 
+  const sanitizeInput = (input: string): string => {
+    return input.toLowerCase().replace(/[^a-z0-9]/g, '');
+  };
+
   const handleGuess = () => {
-    const newHints = generateHint(guess);
+    const sanitizedGuess = sanitizeInput(guess);
+    const newHints = generateHint(sanitizedGuess);
     setGuessLog([...guessLog, { guess, hints: newHints }]);
     setHints(newHints);
-    setGuess('');
+    if (sanitizeInput(selectedPokemon.name) === sanitizedGuess) {
+      finishGame();
+    } else {
+      setGuess('');
+    }
   };
 
   const compareTypes = (type1: string, type2: string) => {
@@ -32,8 +41,11 @@ const Game: React.FC = () => {
   };
 
   const generateHint = (guess: string): string[] => {
-    const guessedPokemon = pokemonData.find(p => p.name.toLowerCase() === guess.toLowerCase());
+    const guessedPokemon = pokemonData.find(p => sanitizeInput(p.name) === guess);
     if (guessedPokemon) {
+
+      console.log(`Sanitized: ${guessedPokemon.name}`);
+      console.log(`Guessed: ${selectedPokemon.name}`);
       const typeHint = compareTypes(guessedPokemon.type, selectedPokemon.type);
       const generationHint = guessedPokemon.generation === selectedPokemon.generation
         ? 'Correct Generation'

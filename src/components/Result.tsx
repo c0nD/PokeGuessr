@@ -17,8 +17,14 @@ const Result: React.FC = () => {
     navigate('/');
   };
 
+  const sanitizeInput = (input: string): string => {
+    return input.toLowerCase().replace(/[^a-z0-9]/g, '');
+  };
+
   const getSpritePath = (name: string) => {
-    return new URL(`../data/sprites/${name}.png`, import.meta.url).href;
+    const url = new URL(`../data/sprites/${(name)}.png`, import.meta.url).href;
+    console.log(url)
+    return url
   };
 
   return (
