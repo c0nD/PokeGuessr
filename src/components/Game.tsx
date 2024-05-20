@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { pokemonData, Pokemon } from '../data/pokemon';
 import Hint from './Hint';
@@ -14,6 +14,16 @@ const Game: React.FC = () => {
   const [guess, setGuess] = useState<string>('');
   const [hints, setHints] = useState<string[]>([]);
   const [guessLog, setGuessLog] = useState<GuessLog[]>([]);
+  const [tries, setTries] = useState<number>(0);
+  const [bestScore, setBestScore] = useState<number | null>(null);
+  const [gameCompleted, setGameCompleted] = useState<boolean>(false);
+
+  useEffect(() => {
+    const storedBestScore = localStorage.getItem('bestScore');
+    if (storedBestScore) {
+      setBestScore(Number(storedBestScore));
+    }
+  }, []);
 
   const sanitizeInput = (input: string): string => {
     return input.toLowerCase().replace(/[^a-z0-9]/g, '');
@@ -22,10 +32,12 @@ const Game: React.FC = () => {
   const handleGuess = () => {
     const sanitizedGuess = sanitizeInput(guess);
     const newHints = generateHint(sanitizedGuess);
-    setGuessLog([...guessLog, { guess, hints: newHints }]);
+    setGuessLog([{ guess, hints: newHints }, ...guessLog]);
     setHints(newHints);
+    setTries(tries + 1);
     if (sanitizeInput(selectedPokemon.name) === sanitizedGuess) {
-      finishGame();
+      setGameCompleted(true);
+      finishGame(true);
     } else {
       setGuess('');
     }
@@ -43,9 +55,6 @@ const Game: React.FC = () => {
   const generateHint = (guess: string): string[] => {
     const guessedPokemon = pokemonData.find(p => sanitizeInput(p.name) === guess);
     if (guessedPokemon) {
-
-      console.log(`Sanitized: ${guessedPokemon.name}`);
-      console.log(`Guessed: ${selectedPokemon.name}`);
       const typeHint = compareTypes(guessedPokemon.type, selectedPokemon.type);
       const generationHint = guessedPokemon.generation === selectedPokemon.generation
         ? 'Correct Generation'
@@ -70,8 +79,15 @@ const Game: React.FC = () => {
     }
   };
 
-  const finishGame = () => {
+  const finishGame = (completed: boolean) => {
     localStorage.setItem('selectedPokemon', JSON.stringify(selectedPokemon));
+    localStorage.setItem('tries', tries.toString());
+    if (completed) {
+      if (bestScore === null || tries < bestScore) {
+        localStorage.setItem('bestScore', tries.toString());
+        setBestScore(tries);
+      }
+    }
     navigate('/result');
   };
 
@@ -89,7 +105,7 @@ const Game: React.FC = () => {
       <div className="hints">
         {hints.map((hint, index) => <Hint key={index} hint={hint} />)}
       </div>
-      <button className="btn btn-danger" onClick={finishGame}>Finish Game</button>
+      <button className="btn btn-danger" onClick={() => finishGame(false)}>Finish Game</button>
 
       <div className="guess-log">
         <h3>Guess Log</h3>
@@ -101,6 +117,11 @@ const Game: React.FC = () => {
             </div>
           </div>
         ))}
+      </div>
+
+      <div className="score-board">
+        <p>Tries: {tries}</p>
+        {bestScore !== null && <p>Best Score: {bestScore}</p>}
       </div>
     </div>
   );
