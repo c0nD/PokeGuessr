@@ -1,25 +1,21 @@
-import React from "react";
+import React from 'react';
 
 interface HintProps {
   hint: string;
 }
 
 const Hint: React.FC<HintProps> = ({ hint }) => {
-  let color = "";
-  if (hint === "Correct Type" || hint === "Correct Generation") {
-    color = "green";
-  } else if (
-    hint === "Wrong Type" ||
-    hint === "Higher Generation" ||
-    hint === "Lower Generation"
-  ) {
-    color = "yellow";
+  let colorClass = '';
+  if (hint.startsWith('Correct')) {
+    colorClass = 'green';
+  } else if (hint.startsWith('Partially Correct') || hint.startsWith('Close')) {
+    colorClass = 'yellow';
   } else {
-    color = "red";
+    colorClass = 'red';
   }
 
   return (
-    <div className="hint" style={{ backgroundColor: color }}>
+    <div className={`hint ${colorClass}`}>
       {hint}
     </div>
   );
