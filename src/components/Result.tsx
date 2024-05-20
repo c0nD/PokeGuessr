@@ -17,12 +17,17 @@ const Result: React.FC = () => {
     navigate('/');
   };
 
+  const getSpritePath = (name: string) => {
+    return new URL(`../data/sprites/${name}.png`, import.meta.url).href;
+  };
+
   return (
     <div className="result">
       <h2>Game Over</h2>
       {selectedPokemon && (
         <>
           <p>The correct Pokémon was {selectedPokemon.name}.</p>
+          <img src={getSpritePath(selectedPokemon.name)} alt={selectedPokemon.name} className="img-fluid" />
         </>
       )}
       <button className="btn btn-primary btn-lg" onClick={restartGame}>Play Again</button>
