@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { pokemonData, Pokemon } from '../data/pokemon';
 import Hint from './Hint';
 
@@ -9,8 +9,9 @@ interface GuessLog {
 }
 
 const Game: React.FC = () => {
+  const { mode } = useParams<{ mode: 'infinity' | 'daily' }>();
   const navigate = useNavigate();
-  const [selectedPokemon] = useState<Pokemon>(pokemonData[Math.floor(Math.random() * pokemonData.length)]);
+  const [selectedPokemon, setSelectedPokemon] = useState<Pokemon | null>(null);
   const [guess, setGuess] = useState<string>('');
   const [hints, setHints] = useState<string[]>([]);
   const [guessLog, setGuessLog] = useState<GuessLog[]>([]);
@@ -18,11 +19,33 @@ const Game: React.FC = () => {
   const [bestScore, setBestScore] = useState<number | null>(null);
 
   useEffect(() => {
+    if (mode === 'daily') {
+      const dailyPokemon = getDailyPokemon();
+      setSelectedPokemon(dailyPokemon);
+    } else {
+      setSelectedPokemon(pokemonData[Math.floor(Math.random() * pokemonData.length)]);
+    }
     const storedBestScore = localStorage.getItem('bestScore');
     if (storedBestScore) {
       setBestScore(Number(storedBestScore));
     }
-  }, []);
+  }, [mode]);
+
+  const getDailyPokemon = (): Pokemon => {
+    const today = new Date();
+    const dateString = `${today.getFullYear()}${today.getMonth() + 1}${today.getDate()}`;
+    const hash = hashCode(dateString);
+    const index = hash % pokemonData.length;
+    return pokemonData[index];
+  };
+
+  const hashCode = (str: string): number => {
+    let hash = 0;
+    for (let i = 0; i < str.length; i++) {
+      hash = (hash * 31 + str.charCodeAt(i)) % 1000000007;
+    }
+    return hash;
+  };
 
   const sanitizeInput = (input: string): string => {
     return input.toLowerCase().replace(/[^a-z0-9]/g, '');
@@ -34,7 +57,7 @@ const Game: React.FC = () => {
     setGuessLog([{ guess, hints: newHints }, ...guessLog]);
     setHints(newHints);
     setTries(tries + 1);
-    if (sanitizeInput(selectedPokemon.name) === sanitizedGuess) {
+    if (sanitizeInput(selectedPokemon!.name) === sanitizedGuess) {
       finishGame(true);
     } else {
       setGuess('');
@@ -53,23 +76,23 @@ const Game: React.FC = () => {
   const generateHint = (guess: string): string[] => {
     const guessedPokemon = pokemonData.find(p => sanitizeInput(p.name) === guess);
     if (guessedPokemon) {
-      const typeHint = compareTypes(guessedPokemon.type, selectedPokemon.type);
-      const generationHint = guessedPokemon.generation === selectedPokemon.generation
+      const typeHint = compareTypes(guessedPokemon.type, selectedPokemon!.type);
+      const generationHint = guessedPokemon.generation === selectedPokemon!.generation
         ? 'Correct Generation'
-        : Math.abs(guessedPokemon.generation - selectedPokemon.generation) <= 1
+        : Math.abs(guessedPokemon.generation - selectedPokemon!.generation) <= 1
         ? 'Close Generation'
         : 'Wrong Generation';
-      const weightHint = guessedPokemon.weight === selectedPokemon.weight
+      const weightHint = guessedPokemon.weight === selectedPokemon!.weight
         ? 'Correct Weight'
-        : Math.abs(guessedPokemon.weight - selectedPokemon.weight) <= 10
+        : Math.abs(guessedPokemon.weight - selectedPokemon!.weight) <= 10
         ? 'Close Weight'
         : 'Wrong Weight';
-      const heightHint = guessedPokemon.height === selectedPokemon.height
+      const heightHint = guessedPokemon.height === selectedPokemon!.height
         ? 'Correct Height'
-        : Math.abs(guessedPokemon.height - selectedPokemon.height) <= 0.5
+        : Math.abs(guessedPokemon.height - selectedPokemon!.height) <= 0.5
         ? 'Close Height'
         : 'Wrong Height';
-      const legendaryHint = guessedPokemon.isLegendary === selectedPokemon.isLegendary ? 'Correct Legendary Status' : 'Wrong Legendary Status';
+      const legendaryHint = guessedPokemon.isLegendary === selectedPokemon!.isLegendary ? 'Correct Legendary Status' : 'Wrong Legendary Status';
 
       return [typeHint, generationHint, weightHint, heightHint, legendaryHint];
     } else {

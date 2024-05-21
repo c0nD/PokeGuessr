@@ -9,7 +9,7 @@ const App: React.FC = () => {
     <div className="container">
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route path="/game" element={<Game />} />
+        <Route path="/game/:mode" element={<Game />} />
         <Route path="/result" element={<Result />} />
       </Routes>
     </div>
