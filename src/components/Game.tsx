@@ -16,7 +16,6 @@ const Game: React.FC = () => {
   const [guessLog, setGuessLog] = useState<GuessLog[]>([]);
   const [tries, setTries] = useState<number>(0);
   const [bestScore, setBestScore] = useState<number | null>(null);
-  const [gameCompleted, setGameCompleted] = useState<boolean>(false);
 
   useEffect(() => {
     const storedBestScore = localStorage.getItem('bestScore');
@@ -36,7 +35,6 @@ const Game: React.FC = () => {
     setHints(newHints);
     setTries(tries + 1);
     if (sanitizeInput(selectedPokemon.name) === sanitizedGuess) {
-      setGameCompleted(true);
       finishGame(true);
     } else {
       setGuess('');
