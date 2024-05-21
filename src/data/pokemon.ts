@@ -676,7 +676,7 @@ export const pokemonData: Pokemon[] = [
   { name: 'Vivillon', type: 'bug/flying', generation: 6, weight: 17.0, height: 1.2, isLegendary: false },
   { name: 'Litleo', type: 'fire/normal', generation: 6, weight: 13.5, height: 0.6, isLegendary: false },
   { name: 'Pyroar', type: 'fire/normal', generation: 6, weight: 81.5, height: 1.5, isLegendary: false },
-  { name: 'Flabébé', type: 'fairy', generation: 6, weight: 0.1, height: 0.1, isLegendary: false },
+  { name: 'Flabebe', type: 'fairy', generation: 6, weight: 0.1, height: 0.1, isLegendary: false },
   { name: 'Floette', type: 'fairy', generation: 6, weight: 0.9, height: 0.2, isLegendary: false },
   { name: 'Florges', type: 'fairy', generation: 6, weight: 10.0, height: 1.1, isLegendary: false },
   { name: 'Skiddo', type: 'grass', generation: 6, weight: 31.0, height: 0.9, isLegendary: false },
