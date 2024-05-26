@@ -88,7 +88,9 @@ const Result: React.FC = () => {
   };
   const shareToSMS = () => {
     const messageContent = formatMessageContent();
-    const smsUrl = `sms:?&body=${encodeURIComponent(messageContent)}`;
+    const smsUrl = `sms:?&body=${encodeURIComponent(
+      messageContent + +"\n🟩🟩🟩🟩🟩" + "\npokeguessr.me"
+    )}`;
     window.open(smsUrl, "_blank");
   };
 
