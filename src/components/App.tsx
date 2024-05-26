@@ -4,6 +4,7 @@ import Home from "./Home";
 import Game from "./Game";
 import Result from "./Result";
 import HamburgerMenu from "./HamburgerMenu";
+import Footer from "./Footer";
 
 const App: React.FC = () => {
   return (
@@ -18,6 +19,7 @@ const App: React.FC = () => {
           </Routes>
         </div>
       </div>
+      <Footer />
     </div>
   );
 };

@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
-import { pokemonData, Pokemon } from '../data/pokemon';
-import Hint from './Hint';
+import React, { useState, useEffect } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import { pokemonData, Pokemon } from "../data/pokemon";
+import Hint from "./Hint";
 
 interface GuessLog {
   guess: string;
@@ -9,23 +9,25 @@ interface GuessLog {
 }
 
 const Game: React.FC = () => {
-  const { mode } = useParams<{ mode: 'infinity' | 'daily' }>();
+  const { mode } = useParams<{ mode: "infinity" | "daily" }>();
   const navigate = useNavigate();
   const [selectedPokemon, setSelectedPokemon] = useState<Pokemon | null>(null);
-  const [guess, setGuess] = useState<string>('');
+  const [guess, setGuess] = useState<string>("");
   const [hints, setHints] = useState<string[]>([]);
   const [guessLog, setGuessLog] = useState<GuessLog[]>([]);
-  const [tries, setTries] = useState<number>(0);
+  const [tries, setTries] = useState<number>(1);
   const [bestScore, setBestScore] = useState<number | null>(null);
 
   useEffect(() => {
-    if (mode === 'daily') {
+    if (mode === "daily") {
       const dailyPokemon = getDailyPokemon();
       setSelectedPokemon(dailyPokemon);
     } else {
-      setSelectedPokemon(pokemonData[Math.floor(Math.random() * pokemonData.length)]);
+      setSelectedPokemon(
+        pokemonData[Math.floor(Math.random() * pokemonData.length)]
+      );
     }
-    const storedBestScore = localStorage.getItem('bestScore');
+    const storedBestScore = localStorage.getItem("bestScore");
     if (storedBestScore) {
       setBestScore(Number(storedBestScore));
     }
@@ -33,7 +35,9 @@ const Game: React.FC = () => {
 
   const getDailyPokemon = (): Pokemon => {
     const today = new Date();
-    const dateString = `${today.getFullYear()}${today.getMonth() + 1}${today.getDate()}`;
+    const dateString = `${today.getFullYear()}${
+      today.getMonth() + 1
+    }${today.getDate()}`;
     const hash = hashCode(dateString);
     const index = hash % pokemonData.length;
     return pokemonData[index];
@@ -48,7 +52,7 @@ const Game: React.FC = () => {
   };
 
   const sanitizeInput = (input: string): string => {
-    return input.toLowerCase().replace(/[^a-z0-9]/g, '');
+    return input.toLowerCase().replace(/[^a-z0-9]/g, "");
   };
 
   const handleGuess = () => {
@@ -56,60 +60,70 @@ const Game: React.FC = () => {
     const newHints = generateHint(sanitizedGuess);
     setGuessLog([{ guess, hints: newHints }, ...guessLog]);
     setHints(newHints);
-    setTries(tries + 1);
+    setTries(tries + 1); // Increment tries before checking for correctness
     if (sanitizeInput(selectedPokemon!.name) === sanitizedGuess) {
       finishGame(true);
     } else {
-      setGuess('');
+      setGuess("");
     }
   };
 
   const compareTypes = (type1: string, type2: string) => {
-    const types1 = type1.split('/');
-    const types2 = type2.split('/');
-    const commonTypes = types1.filter(type => types2.includes(type));
-    if (commonTypes.length === 2) return 'Correct Type';
-    if (commonTypes.length === 1) return 'Partially Correct Type';
-    return 'Wrong Type';
+    const types1 = type1.split("/");
+    const types2 = type2.split("/");
+    const commonTypes = types1.filter((type) => types2.includes(type));
+    if (commonTypes.length === 2) return "Correct Type";
+    if (commonTypes.length === 1) return "Partially Correct Type";
+    return "Wrong Type";
   };
 
   const generateHint = (guess: string): string[] => {
-    const guessedPokemon = pokemonData.find(p => sanitizeInput(p.name) === guess);
+    const guessedPokemon = pokemonData.find(
+      (p) => sanitizeInput(p.name) === guess
+    );
     if (guessedPokemon) {
       const typeHint = compareTypes(guessedPokemon.type, selectedPokemon!.type);
-      const generationHint = guessedPokemon.generation === selectedPokemon!.generation
-        ? 'Correct Generation'
-        : Math.abs(guessedPokemon.generation - selectedPokemon!.generation) <= 1
-        ? 'Close Generation'
-        : 'Wrong Generation';
-      const weightHint = guessedPokemon.weight === selectedPokemon!.weight
-        ? 'Correct Weight'
-        : Math.abs(guessedPokemon.weight - selectedPokemon!.weight) <= 10
-        ? 'Close Weight'
-        : 'Wrong Weight';
-      const heightHint = guessedPokemon.height === selectedPokemon!.height
-        ? 'Correct Height'
-        : Math.abs(guessedPokemon.height - selectedPokemon!.height) <= 0.5
-        ? 'Close Height'
-        : 'Wrong Height';
-      const legendaryHint = guessedPokemon.isLegendary === selectedPokemon!.isLegendary ? 'Correct Legendary Status' : 'Wrong Legendary Status';
+      const generationHint =
+        guessedPokemon.generation === selectedPokemon!.generation
+          ? "Correct Generation"
+          : Math.abs(guessedPokemon.generation - selectedPokemon!.generation) <=
+            1
+          ? "Close Generation"
+          : "Wrong Generation";
+      const weightHint =
+        guessedPokemon.weight === selectedPokemon!.weight
+          ? "Correct Weight"
+          : Math.abs(guessedPokemon.weight - selectedPokemon!.weight) <= 10
+          ? "Close Weight"
+          : "Wrong Weight";
+      const heightHint =
+        guessedPokemon.height === selectedPokemon!.height
+          ? "Correct Height"
+          : Math.abs(guessedPokemon.height - selectedPokemon!.height) <= 0.5
+          ? "Close Height"
+          : "Wrong Height";
+      const legendaryHint =
+        guessedPokemon.isLegendary === selectedPokemon!.isLegendary
+          ? "Correct Legendary Status"
+          : "Wrong Legendary Status";
 
       return [typeHint, generationHint, weightHint, heightHint, legendaryHint];
     } else {
-      return ['Invalid Pokémon Name'];
+      return ["Invalid Pokémon Name"];
     }
   };
 
   const finishGame = (completed: boolean) => {
-    localStorage.setItem('selectedPokemon', JSON.stringify(selectedPokemon));
-    localStorage.setItem('tries', tries.toString());
+    localStorage.setItem("selectedPokemon", JSON.stringify(selectedPokemon));
+    localStorage.setItem("tries", tries.toString());
+    localStorage.setItem("guessLog", JSON.stringify(guessLog)); // Store guess log
     if (completed) {
       if (bestScore === null || tries < bestScore) {
-        localStorage.setItem('bestScore', tries.toString());
+        localStorage.setItem("bestScore", tries.toString());
         setBestScore(tries);
       }
     }
-    navigate('/result');
+    navigate("/result");
   };
 
   return (
@@ -122,26 +136,36 @@ const Game: React.FC = () => {
         onChange={(e) => setGuess(e.target.value)}
         placeholder="Enter Pokémon name"
       />
-      <button className="btn btn-success" onClick={handleGuess}>Submit Guess</button>
+      <button className="btn btn-success" onClick={handleGuess}>
+        Submit Guess
+      </button>
       <div className="hints">
-        {hints.map((hint, index) => <Hint key={index} hint={hint} />)}
+        {hints.map((hint, index) => (
+          <Hint key={index} hint={hint} />
+        ))}
       </div>
-      <button className="btn btn-danger" onClick={() => finishGame(false)}>Finish Game</button>
+      <button className="btn btn-danger" onClick={() => finishGame(false)}>
+        Finish Game
+      </button>
 
       <div className="guess-log">
         <h3>Guess Log</h3>
         {guessLog.map((log, index) => (
           <div key={index} className="log-entry">
-            <p><strong>Guess:</strong> {log.guess}</p>
+            <p>
+              <strong>Guess:</strong> {log.guess}
+            </p>
             <div className="hints">
-              {log.hints.map((hint, hintIndex) => <Hint key={hintIndex} hint={hint} />)}
+              {log.hints.map((hint, hintIndex) => (
+                <Hint key={hintIndex} hint={hint} />
+              ))}
             </div>
           </div>
         ))}
       </div>
 
       <div className="score-board">
-        <p>Tries: {tries}</p>
+        <p>Tries: {tries - 1}</p>
         {bestScore !== null && <p>Best Score: {bestScore}</p>}
       </div>
     </div>
