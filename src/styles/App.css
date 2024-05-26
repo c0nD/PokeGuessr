@@ -111,6 +111,16 @@ button {
   background-color: var(--pokemon-color-6, #218838);
 }
 
+.result .btn-info {
+  background-color: #17a2b8;
+  border-color: #17a2b8;
+}
+
+.result .btn-info:hover {
+  background-color: #138496;
+  border-color: #117a8b;
+}
+
 .btn-primary {
   background-color: var(--pokemon-color-5, #007bff);
   border-color: var(--pokemon-color-5, #007bff);

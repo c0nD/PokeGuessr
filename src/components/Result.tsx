@@ -73,12 +73,23 @@ const Result: React.FC = () => {
     return tweetContent;
   };
 
+  const formatMessageContent = () => {
+    const resultString = generateResultString();
+    const messageContent = `PokeGuessr Daily ${new Date().toLocaleDateString()} - ${tries} tries\n${resultString}`;
+    return messageContent;
+  };
+
   const shareToTwitter = () => {
     const tweetContent = formatTweetContent();
     const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(
-      tweetContent + "\n🟩🟩🟩🟩🟩"
+      tweetContent + "\n🟩🟩🟩🟩🟩" + "\npokeguessr.me"
     )}`;
     window.open(twitterUrl, "_blank");
+  };
+  const shareToSMS = () => {
+    const messageContent = formatMessageContent();
+    const smsUrl = `sms:?&body=${encodeURIComponent(messageContent)}`;
+    window.open(smsUrl, "_blank");
   };
 
   return (
@@ -96,11 +107,14 @@ const Result: React.FC = () => {
       )}
       <p>Tries: {tries}</p>
       {bestScore !== null && <p>Best Score: {bestScore}</p>}
+      <button className="btn btn-info btn-lg" onClick={shareToTwitter}>
+        Share to Twitter
+      </button>
       <button className="btn btn-primary btn-lg" onClick={restartGame}>
         Play Again
       </button>
-      <button className="btn btn-info btn-lg" onClick={shareToTwitter}>
-        Share to Twitter
+      <button className="btn btn-success btn-lg" onClick={shareToSMS}>
+        Share via SMS
       </button>
       <div className="guess-log">
         <h3>Guess Log</h3>
