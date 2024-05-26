@@ -69,27 +69,31 @@ const Result: React.FC = () => {
 
   const formatTweetContent = () => {
     const resultString = generateResultString();
-    const tweetContent = `PokeGuessr Daily ${new Date().toLocaleDateString()} - ${tries} tries\n${resultString}`;
+    const tweetContent = `PokeGuessr Daily ${new Date().toLocaleDateString()} - ${tries} tries\n${
+      "🟩🟩🟩🟩🟩\n" + resultString
+    }`;
     return tweetContent;
   };
 
   const formatMessageContent = () => {
     const resultString = generateResultString();
-    const messageContent = `PokeGuessr Daily ${new Date().toLocaleDateString()} - ${tries} tries\n${resultString}`;
+    const messageContent = `PokeGuessr Daily ${new Date().toLocaleDateString()} - ${tries} tries\n${
+      "🟩🟩🟩🟩🟩\n" + resultString
+    }`;
     return messageContent;
   };
 
   const shareToTwitter = () => {
     const tweetContent = formatTweetContent();
     const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(
-      tweetContent + "\n🟩🟩🟩🟩🟩" + "\npokeguessr.me"
+      tweetContent + "\npokeguessr.me"
     )}`;
     window.open(twitterUrl, "_blank");
   };
   const shareToSMS = () => {
     const messageContent = formatMessageContent();
     const smsUrl = `sms:?&body=${encodeURIComponent(
-      messageContent + +"\n🟩🟩🟩🟩🟩" + "\npokeguessr.me"
+      messageContent + "\npokeguessr.me"
     )}`;
     window.open(smsUrl, "_blank");
   };
