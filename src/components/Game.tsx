@@ -33,22 +33,50 @@ const Game: React.FC = () => {
     }
   }, [mode]);
 
-  const getDailyPokemon = (): Pokemon => {
-    const today = new Date();
-    const dateString = `${today.getFullYear()}${
-      today.getMonth() + 1
-    }${today.getDate()}`;
-    const hash = hashCode(dateString);
-    const index = hash % pokemonData.length;
-    return pokemonData[index];
-  };
-
   const hashCode = (str: string): number => {
     let hash = 0;
     for (let i = 0; i < str.length; i++) {
       hash = (hash * 31 + str.charCodeAt(i)) % 1000000007;
     }
     return hash;
+  };
+
+  const getDailyPokemon = () => {
+    const today = new Date();
+    const dateString = `${today.getFullYear()}${(today.getMonth() + 1)
+      .toString()
+      .padStart(2, "0")}${today.getDate().toString().padStart(2, "0")}`;
+
+    const hash = hashCode(dateString);
+    const shuffledPokemonData = shuffleArray(pokemonData, hash);
+    return shuffledPokemonData[0];
+  };
+
+  // Shuffle array function using Fisher-Yates algorithm
+  const shuffleArray = (array: unknown[], seed: number): unknown[] => {
+    const shuffledArray = array.slice();
+    const random = seedRandom(seed);
+
+    for (let i = shuffledArray.length - 1; i > 0; i--) {
+      const j = Math.floor(random() * (i + 1));
+      [shuffledArray[i], shuffledArray[j]] = [
+        shuffledArray[j],
+        shuffledArray[i],
+      ];
+    }
+
+    return shuffledArray;
+  };
+
+  // Seedable random generator (Mulberry32 algorithm)
+  const seedRandom = (seed: number) => {
+    return function () {
+      seed |= 0;
+      seed = (seed + 0x6d2b79f5) | 0;
+      let t = Math.imul(seed ^ (seed >>> 15), 1 | seed);
+      t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+      return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+    };
   };
 
   const sanitizeInput = (input: string): string => {
