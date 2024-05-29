@@ -53,7 +53,7 @@ const Game: React.FC = () => {
   };
 
   // Shuffle array function using Fisher-Yates algorithm
-  const shuffleArray = (array: unknown[], seed: number): unknown[] => {
+  const shuffleArray = (array: Pokemon[], seed: number): Pokemon[] => {
     const shuffledArray = array.slice();
     const random = seedRandom(seed);
 
