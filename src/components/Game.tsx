@@ -85,10 +85,21 @@ const Game: React.FC = () => {
 
   const handleGuess = () => {
     const sanitizedGuess = sanitizeInput(guess);
+    const guessedPokemon = pokemonData.find(
+      (p) => sanitizeInput(p.name) === sanitizedGuess
+    );
+  
+    if (!guessedPokemon) {
+      setGuess("");
+      alert("Pokémon not found. Please check your spelling and try again.");
+      return;
+    }
+  
     const newHints = generateHint(sanitizedGuess);
     setGuessLog([{ guess, hints: newHints }, ...guessLog]);
     setHints(newHints);
-    setTries(tries + 1); // Increment tries before checking for correctness
+    setTries(tries + 1);
+  
     if (sanitizeInput(selectedPokemon!.name) === sanitizedGuess) {
       finishGame(true);
     } else {
