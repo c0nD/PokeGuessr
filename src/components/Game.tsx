@@ -111,8 +111,13 @@ const Game: React.FC = () => {
     const types1 = type1.split("/");
     const types2 = type2.split("/");
     const commonTypes = types1.filter((type) => types2.includes(type));
-    if (commonTypes.length === 2) return "Correct Type";
-    if (commonTypes.length === 1) return "Partially Correct Type";
+    
+    if (types1.length === types2.length && commonTypes.length === types1.length) {
+      return "Correct Type";
+    }
+    if (commonTypes.length > 0) {
+      return "Partially Correct Type";
+    }
     return "Wrong Type";
   };
 
