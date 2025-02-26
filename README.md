@@ -1,6 +1,6 @@
 # PokéGuessr
 
-PokéGuessr is a fun and interactive web application that challenges users to guess Pokémon based on given hints. This project was made for my girlfriend, Ellery <3
+PokéGuessr is a fun and interactive web application that challenges users to guess Pokémon based on given hints. This project was made for my girlfriend (now fiancée), Ellery <3
 
 ## Features
 
